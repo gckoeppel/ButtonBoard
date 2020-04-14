@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include "Adafruit_MCP23017.h"
+#include "Adafruit_ADS1015.h"
 
 #include "PinDefinitions.h"
 
 Adafruit_MCP23017 mcp;
+Adafruit_ADS1015 ads;
 
 void setup() {
   // put your setup code here, to run once:
@@ -48,6 +50,10 @@ void setup() {
   mcp.pullUp(BUTTON_ARCADE_WHITE, HIGH);
   mcp.pinMode(LED_SWITCH_RED, OUTPUT);
 
+  // ADS analog digital converter
+  ads.begin();
+  ads.setGain(GAIN_TWOTHIRDS);
+
   int i;
   for(i=0;i<8;i++)
   {
@@ -74,26 +80,31 @@ void loop() {
 
   uint8_t switchGreen = digitalRead(SWITCH_GREEN);
   uint8_t switchRed = digitalRead(SWITCH_RED);
+
+
+  int16_t poti0 = ads.readADC_SingleEnded(ADS_POTI_0);
+  int16_t poti1 = ads.readADC_SingleEnded(ADS_POTI_1);
+  int16_t poti2 = ads.readADC_SingleEnded(ADS_POTI_2);
+  int16_t poti3 = ads.readADC_SingleEnded(ADS_POTI_3);
   
   Serial.println("==============================================");
   Serial.println("Current input values:");
   Serial.print("Slider Left:  ");
-  Serial.print(sliderLeft);
-  Serial.println();
+  Serial.println(sliderLeft);
   Serial.print("Slider Right: ");
-  Serial.print(sliderRight);
-  Serial.println();
-  Serial.print("Buttons:      ");
-  Serial.print(buttons, BIN);
-  Serial.println();
-  Serial.print("Switch Green: ");
-  Serial.print(switchGreen);
-  Serial.println();
-  Serial.print("Switch Red:   ");
-  Serial.print(switchRed);
-  Serial.println();
+  Serial.println(sliderRight);
   
+  Serial.print("Poti 0: "); Serial.println(poti0);
+  Serial.print("Poti 1: "); Serial.println(poti1);
+  Serial.print("Poti 2: "); Serial.println(poti2);
+  Serial.print("Poti 3: "); Serial.println(poti3);
 
+  Serial.print("Buttons:      ");
+  Serial.println(buttons, BIN);
+  Serial.print("Switch Green: ");
+  Serial.println(switchGreen);
+  Serial.print("Switch Red:   ");
+  Serial.println(switchRed);
 
   delay(500);
 }

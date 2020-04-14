@@ -31,3 +31,9 @@
 #define BUTTON_ARCADE_RED 13
 #define BUTTON_ARCADE_WHITE 14
 #define LED_SWITCH_RED 15
+
+// ADS Pinout
+#define ADS_POTI_0 0
+#define ADS_POTI_1 1
+#define ADS_POTI_2 2
+#define ADS_POTI_3 3
