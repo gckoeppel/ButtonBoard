@@ -7,6 +7,7 @@
 
 #include "PinDefinitions.h"
 #include "midi.h"
+#include "ArcadeButtons.h"
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
@@ -16,7 +17,8 @@ Adafruit_ADS1015 ads;
 // Global variables to hold all read data
 int16_t sliderLeft;
 int16_t sliderRight;
-uint8_t buttons;
+bool arcadeRed;
+bool arcadeWhite;
 uint8_t switchGreen;
 uint8_t switchRed;
 int16_t poti0;
@@ -36,6 +38,23 @@ Thread GetValuesThread = Thread();
 
 // Thread that logs all values
 Thread LogValuesThread = Thread();
+
+// Thread that executes sound stuff
+Thread SoundThread = Thread();
+
+// Thread that executes sound stuff
+Thread LEDThread = Thread();
+
+void Sound()
+{
+  midiAllOff(0);
+  ArcadeButtons();
+}
+
+void LED()
+{
+  ArcadeButtonsLED();
+}
    
 // Function that blinks the hartbeat led if the battery voltage is good
 // LED will stay on if battery voltage is low
@@ -53,8 +72,10 @@ void GetValues()
   sliderLeft = analogRead(SLIDER_LEFT);
   sliderRight = analogRead(SLIDER_RIGHT);
 
-  uint8_t buttons_tmp = mcp.readGPIO(1); // Read GPIO B
-  buttons = buttons_tmp & 0x7F; // mask out top bit, it is an output
+  uint8_t buttons = mcp.readGPIO(1); // Read GPIO B
+
+  arcadeWhite = CHECK_BIT(buttons, BUTTON_ARCADE_WHITE-8);
+  arcadeRed = CHECK_BIT(buttons, BUTTON_ARCADE_RED-8);
 
   switchGreen = digitalRead(SWITCH_GREEN);
   switchRed = digitalRead(SWITCH_RED);
@@ -87,8 +108,9 @@ void LogValues()
   Serial.print("Poti 2: "); Serial.println(poti2);
   Serial.print("Poti 3: "); Serial.println(poti3);
 
-  Serial.print("Buttons:      ");
-  Serial.println(buttons, BIN);
+  Serial.println("Buttons:");
+  Serial.print("Arcade Red:      "); Serial.println(arcadeRed);
+  Serial.print("Arcade White:    "); Serial.println(arcadeWhite);
   Serial.print("Switch Green: ");
   Serial.println(switchGreen);
   Serial.print("Switch Red:   ");
@@ -160,9 +182,17 @@ void setup() {
   LogValuesThread.onRun(LogValues);
   LogValuesThread.setInterval(1000);
 
+  SoundThread.onRun(Sound);
+  SoundThread.setInterval(100);
+
+  LEDThread.onRun(LED);
+  LEDThread.setInterval(500);
+
   control.add(&HartBeatThread);
   control.add(&GetValuesThread);
   control.add(&LogValuesThread);
+  control.add(&SoundThread);
+  control.add(&LEDThread);
 
   // Loop through LEDs to show we are ready
   int i;
