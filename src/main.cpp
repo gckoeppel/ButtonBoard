@@ -47,7 +47,7 @@ Thread LEDThread = Thread();
 
 void Sound()
 {
-  midiAllOff(0);
+  //midiAllOff(0);
   ArcadeButtons();
 }
 

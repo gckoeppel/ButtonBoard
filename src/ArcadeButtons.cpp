@@ -6,16 +6,56 @@
 // Poti 3 controls instrument of white button
 void ArcadeButtons()
 {
-  if(not arcadeRed)
+  static bool arcadeRedLast = true;
+  static bool arcadeWhiteLast = true;
+  static uint8_t redKeyLast, whiteKeyLast;
+  uint8_t redKey, whiteKey;
+
+  redKey = SliderToKey(sliderLeft);
+  // button press falling edge -> turn sound on
+  if((arcadeRed == false) && (arcadeRedLast == true))
   {
     midiSetInstrument(0, PotiToArcadeInstrument(poti2));
-    midiNoteOn(0,SliderToKey(sliderLeft),127);
+    midiNoteOn(0,redKey,127);
+    redKeyLast = redKey;
   }
-  if(not arcadeWhite)
+  // button pressed, key changed
+  else if((arcadeRed == false) && (redKey != redKeyLast))
   {
-    midiSetInstrument(0, PotiToArcadeInstrument(poti3));
-    midiNoteOn(0,SliderToKey(sliderRight),127);
+    midiNoteOff(0,redKeyLast,127);
+    midiNoteOn(0,redKey,127);
+    redKeyLast = redKey;
   }
+  // button off -> turn sound off
+  else if(arcadeRed == true)
+  {
+    midiNoteOff(0,redKeyLast,127);
+  }
+  arcadeRedLast = arcadeRed;
+  
+  // same as above, just for white key
+  whiteKey = SliderToKey(sliderRight);
+  // button press falling edge -> turn sound on
+  if((arcadeWhite == false) && (arcadeWhiteLast == true))
+  {
+    midiSetInstrument(1, PotiToArcadeInstrument(poti3));
+    midiNoteOn(1,whiteKey,127);
+    whiteKeyLast = whiteKey;
+  }
+  // button pressed, key changed
+  else if((arcadeWhite == false) && (whiteKey != whiteKeyLast))
+  {
+    midiNoteOff(1,whiteKeyLast,127);
+    midiNoteOn(1,whiteKey,127);
+    whiteKeyLast = whiteKey;
+  }
+  // button off -> turn sound off
+  else if(arcadeWhite == true)
+  {
+    midiNoteOff(1,whiteKeyLast,127);
+  }
+  arcadeWhiteLast = arcadeWhite;
+  
 }
 
 // Converts Poti value to Instrument
