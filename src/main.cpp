@@ -2,6 +2,9 @@
 #include "Adafruit_MCP23017.h"
 #include "Adafruit_ADS1015.h"
 
+#include <Thread.h>
+#include <ThreadController.h>
+
 #include "PinDefinitions.h"
 #include "midi.h"
 
@@ -9,6 +12,78 @@
 
 Adafruit_MCP23017 mcp;
 Adafruit_ADS1015 ads;
+
+// Variables to hold all read data
+int16_t sliderLeft;
+int16_t sliderRight;
+uint8_t buttons;
+uint8_t switchGreen;
+uint8_t switchRed;
+int16_t poti0;
+int16_t poti1;
+int16_t poti2;
+int16_t poti3;
+
+// ThreadController that will controll all threads
+ThreadController control = ThreadController();
+
+// Thread that blinks the HartBeat LED
+Thread HartBeatThread = Thread();
+
+// Thread that gets all input values
+Thread GetValuesThread = Thread();
+
+// Thread that logs all values
+Thread LogValuesThread = Thread();
+
+// Thread that blinks the hartbeat led if the battery voltage is good
+// LED will stay on if battery voltage is low
+void HartBeat()
+{
+  static bool ledStatus = false;
+  ledStatus = !ledStatus;
+
+  digitalWrite(LED_YELLOW, ledStatus);
+}
+
+void GetValues()
+{
+  sliderLeft = analogRead(SLIDER_LEFT);
+  sliderRight = analogRead(SLIDER_RIGHT);
+
+  buttons = mcp.readGPIO(1); // Read GPIO B
+  buttons &= 0x7F; // mask out top bit, it is an output
+
+  switchGreen = digitalRead(SWITCH_GREEN);
+  switchRed = digitalRead(SWITCH_RED);
+
+  poti0 = ads.readADC_SingleEnded(ADS_POTI_0);
+  poti1 = ads.readADC_SingleEnded(ADS_POTI_1);
+  poti2 = ads.readADC_SingleEnded(ADS_POTI_2);
+  poti3 = ads.readADC_SingleEnded(ADS_POTI_3);
+}
+
+void LogValues()
+{
+  Serial.println("==============================================");
+  Serial.println("Current input values:");
+  Serial.print("Slider Left:  ");
+  Serial.println(sliderLeft);
+  Serial.print("Slider Right: ");
+  Serial.println(sliderRight);
+  
+  Serial.print("Poti 0: "); Serial.println(poti0);
+  Serial.print("Poti 1: "); Serial.println(poti1);
+  Serial.print("Poti 2: "); Serial.println(poti2);
+  Serial.print("Poti 3: "); Serial.println(poti3);
+
+  Serial.print("Buttons:      ");
+  Serial.println(buttons, BIN);
+  Serial.print("Switch Green: ");
+  Serial.println(switchGreen);
+  Serial.print("Switch Red:   ");
+  Serial.println(switchRed);
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -63,21 +138,42 @@ void setup() {
   ads.begin();
   ads.setGain(GAIN_TWOTHIRDS);
 
+  // Setup threads
+  HartBeatThread.onRun(HartBeat);
+  HartBeatThread.setInterval(1000);
+  
+  GetValuesThread.onRun(GetValues);
+  GetValuesThread.setInterval(100);
+
+  LogValuesThread.onRun(LogValues);
+  LogValuesThread.setInterval(1000);
+
+  control.add(&HartBeatThread);
+  control.add(&GetValuesThread);
+  control.add(&LogValuesThread);
+
+  // Loop through LEDs to show we are ready
   int i;
   for(i=0;i<8;i++)
   {
     mcp.digitalWrite(i,HIGH);
-    delay(200);
+    delay(100);
     mcp.digitalWrite(i,LOW);
   }
   mcp.digitalWrite(15,HIGH);
-  delay(200);
+  delay(100);
   mcp.digitalWrite(15,LOW);
 
   Serial.println("Setup Completed");
 }
 
 void loop() {
+	// run ThreadController
+	// this will check every thread inside ThreadController,
+	// if it should run. If yes, he will run it;
+	control.run();
+
+  /*
   // put your main code here, to run repeatedly:
 
   // get all input data
@@ -120,7 +216,7 @@ void loop() {
     midiSetInstrument(0, VS1053_GM1_VIBRAPHONE);
     midiNoteOn(0,sliderLeft/12,127);
   }
-  
+  // if white arcade button is pressed, play tone of right slider
   else if(not CHECK_BIT(buttons, BUTTON_ARCADE_WHITE-8))
   {
     midiSetInstrument(0, VS1053_GM1_ALTO_SAX);
@@ -159,5 +255,6 @@ void loop() {
   }  
 
   delay(100);
+*/
 }
 
