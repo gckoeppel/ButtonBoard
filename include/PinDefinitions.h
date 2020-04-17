@@ -9,6 +9,7 @@
 
 #define SLIDER_LEFT A0
 #define SLIDER_RIGHT A1
+#define BATTERY A2
 #define LED_YELLOW_BOTTOM A3
 #define LED_GREEN_RIGHT A4
 #define LED_YELLOW A5

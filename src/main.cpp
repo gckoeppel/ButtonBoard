@@ -13,7 +13,7 @@
 Adafruit_MCP23017 mcp;
 Adafruit_ADS1015 ads;
 
-// Variables to hold all read data
+// Global variables to hold all read data
 int16_t sliderLeft;
 int16_t sliderRight;
 uint8_t buttons;
@@ -23,6 +23,7 @@ int16_t poti0;
 int16_t poti1;
 int16_t poti2;
 int16_t poti3;
+float battery_voltage;
 
 // ThreadController that will controll all threads
 ThreadController control = ThreadController();
@@ -35,8 +36,8 @@ Thread GetValuesThread = Thread();
 
 // Thread that logs all values
 Thread LogValuesThread = Thread();
-
-// Thread that blinks the hartbeat led if the battery voltage is good
+   
+// Function that blinks the hartbeat led if the battery voltage is good
 // LED will stay on if battery voltage is low
 void HartBeat()
 {
@@ -46,13 +47,14 @@ void HartBeat()
   digitalWrite(LED_YELLOW, ledStatus);
 }
 
+// Function that gets all input data
 void GetValues()
 {
   sliderLeft = analogRead(SLIDER_LEFT);
   sliderRight = analogRead(SLIDER_RIGHT);
 
-  buttons = mcp.readGPIO(1); // Read GPIO B
-  buttons &= 0x7F; // mask out top bit, it is an output
+  uint8_t buttons_tmp = mcp.readGPIO(1); // Read GPIO B
+  buttons = buttons_tmp & 0x7F; // mask out top bit, it is an output
 
   switchGreen = digitalRead(SWITCH_GREEN);
   switchRed = digitalRead(SWITCH_RED);
@@ -61,8 +63,16 @@ void GetValues()
   poti1 = ads.readADC_SingleEnded(ADS_POTI_1);
   poti2 = ads.readADC_SingleEnded(ADS_POTI_2);
   poti3 = ads.readADC_SingleEnded(ADS_POTI_3);
+
+  // measure battery as described in https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/power-management
+  // just using a different pin because the original battery pin is blocked by the interface to the audio feather
+  float readvbat = analogRead(BATTERY);
+  readvbat *= 2;    // we divided by 2, so multiply back
+  readvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+  battery_voltage = readvbat / 1024;
 }
 
+// Logs all measured data, used for debugging
 void LogValues()
 {
   Serial.println("==============================================");
@@ -83,6 +93,8 @@ void LogValues()
   Serial.println(switchGreen);
   Serial.print("Switch Red:   ");
   Serial.println(switchRed);
+
+  Serial.print("Battery Voltage:  "); Serial.println(battery_voltage);
 }
 
 void setup() {
