@@ -80,10 +80,11 @@ void GetValues()
   switchGreen = digitalRead(SWITCH_GREEN);
   switchRed = digitalRead(SWITCH_RED);
 
-  poti0 = ads.readADC_SingleEnded(ADS_POTI_0);
-  poti1 = ads.readADC_SingleEnded(ADS_POTI_1);
-  poti2 = ads.readADC_SingleEnded(ADS_POTI_2);
-  poti3 = ads.readADC_SingleEnded(ADS_POTI_3);
+  // poti inputs are scaled to 0-1023 and inverted
+  poti0 = map(ads.readADC_SingleEnded(ADS_POTI_0), 0, 1680, 1023, 0);
+  poti1 = map(ads.readADC_SingleEnded(ADS_POTI_1), 0, 1680, 1023, 0);
+  poti2 = map(ads.readADC_SingleEnded(ADS_POTI_2), 0, 1680, 1023, 0);
+  poti3 = map(ads.readADC_SingleEnded(ADS_POTI_3), 0, 1680, 1023, 0);
 
   // measure battery as described in https://learn.adafruit.com/adafruit-feather-32u4-basic-proto/power-management
   // just using a different pin because the original battery pin is blocked by the interface to the audio feather
