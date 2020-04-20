@@ -32,6 +32,24 @@ void ButtonsSimple()
   keyLast = key;
 }
 
+void ButtonsLEDChase()
+{
+  static int ledOn = 0;
+
+  mcp.digitalWrite(ledOn,LOW);
+
+  if(ledOn == LED_BUTTON_RED)
+  {
+    ledOn = LED_BUTTON_GREEN;
+  }
+  else
+  {
+    ledOn += 1;
+  }
+
+  mcp.digitalWrite(ledOn,HIGH);
+}
+
 void SetButtonInstruments(int Poti)
 {
   if(Poti < 128)

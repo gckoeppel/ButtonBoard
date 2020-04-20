@@ -7,3 +7,4 @@
 
 void ButtonsSimple();
 void SetButtonInstruments(int Poti);
+void ButtonsLEDChase();

@@ -61,6 +61,7 @@ void Sound()
 void LED()
 {
   ArcadeButtonsLED();
+  ButtonsLEDChase();
 }
    
 // Function that blinks the hartbeat led if the battery voltage is good
