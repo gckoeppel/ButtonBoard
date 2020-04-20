@@ -19,3 +19,9 @@ void ButtonToSound(bool button, bool buttonLast, uint8_t key, uint8_t keyLast, u
     midiNoteOff(channel,keyLast,127);
   }
 }
+
+// Converts analog valude to key value
+int AnalogToKey(int analog)
+{
+    return analog/100+55;
+}

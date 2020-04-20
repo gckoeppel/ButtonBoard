@@ -11,13 +11,13 @@ void ArcadeButtons()
   static uint8_t redKeyLast, whiteKeyLast;
   uint8_t redKey, whiteKey;
   
-  redKey = SliderToKey(sliderLeft);
+  redKey = AnalogToKey(sliderLeft);
   midiSetInstrument(0, PotiToArcadeInstrument(poti2));
   ButtonToSound(arcadeRed, arcadeRedLast, redKey, redKeyLast, 0);
   arcadeRedLast = arcadeRed;
   redKeyLast = redKey;
   
-  whiteKey = SliderToKey(sliderRight);
+  whiteKey = AnalogToKey(sliderRight);
   midiSetInstrument(1, PotiToArcadeInstrument(poti3));
   ButtonToSound(arcadeWhite, arcadeWhiteLast, whiteKey, whiteKeyLast, 1);
   arcadeWhiteLast = arcadeWhite;
@@ -44,12 +44,6 @@ int PotiToArcadeInstrument(int Poti)
   if(Poti < 1024)
     return VS1053_GM1_OCARINA;
   return VS1053_GM1_SYNTH_BRASS_1;
-}
-
-// Converts slider to key value
-int SliderToKey(int slider)
-{
-    return slider/100+55;
 }
 
 // LEDs in Arcade Buttons blink alternating

@@ -11,6 +11,11 @@ extern int16_t sliderLeft;
 extern int16_t sliderRight;
 extern bool arcadeRed;
 extern bool arcadeWhite;
+extern bool green;
+extern bool yellow;
+extern bool white;
+extern bool blue;
+extern bool red;
 extern uint8_t switchGreen;
 extern uint8_t switchRed;
 extern int16_t poti0;
@@ -19,3 +24,4 @@ extern int16_t poti2;
 extern int16_t poti3;
 
 void ButtonToSound(bool button, bool buttonLast, uint8_t key, uint8_t keyLast, uint8_t channel);
+int AnalogToKey(int analog);

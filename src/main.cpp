@@ -8,6 +8,7 @@
 #include "PinDefinitions.h"
 #include "midi.h"
 #include "ArcadeButtons.h"
+#include "Buttons.h"
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
@@ -19,6 +20,11 @@ int16_t sliderLeft;
 int16_t sliderRight;
 bool arcadeRed;
 bool arcadeWhite;
+bool green;
+bool yellow;
+bool white;
+bool blue;
+bool red;
 uint8_t switchGreen;
 uint8_t switchRed;
 int16_t poti0;
@@ -49,6 +55,7 @@ void Sound()
 {
   //midiAllOff(0);
   ArcadeButtons();
+  ButtonsSimple();
 }
 
 void LED()
@@ -76,6 +83,12 @@ void GetValues()
 
   arcadeWhite = CHECK_BIT(buttons, BUTTON_ARCADE_WHITE-8);
   arcadeRed = CHECK_BIT(buttons, BUTTON_ARCADE_RED-8);
+
+  green = CHECK_BIT(buttons, BUTTON_GREEN-8);
+  yellow = CHECK_BIT(buttons, BUTTON_YELLOW-8);
+  white = CHECK_BIT(buttons, BUTTON_WHITE-8);
+  blue = CHECK_BIT(buttons, BUTTON_BLUE-8);
+  red = CHECK_BIT(buttons, BUTTON_RED-8);
 
   switchGreen = digitalRead(SWITCH_GREEN);
   switchRed = digitalRead(SWITCH_RED);
@@ -112,6 +125,11 @@ void LogValues()
   Serial.println("Buttons:");
   Serial.print("Arcade Red:      "); Serial.println(arcadeRed);
   Serial.print("Arcade White:    "); Serial.println(arcadeWhite);
+  Serial.print("Green:           "); Serial.println(green);
+  Serial.print("Yellow:          "); Serial.println(yellow);
+  Serial.print("White:           "); Serial.println(white);
+  Serial.print("Blue:            "); Serial.println(blue);
+  Serial.print("Red:             "); Serial.println(red);
   Serial.print("Switch Green: ");
   Serial.println(switchGreen);
   Serial.print("Switch Red:   ");
