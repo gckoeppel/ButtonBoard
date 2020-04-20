@@ -197,13 +197,13 @@ void setup() {
   HartBeatThread.setInterval(1000);
   
   GetValuesThread.onRun(GetValues);
-  GetValuesThread.setInterval(100);
+  GetValuesThread.setInterval(20);
 
   LogValuesThread.onRun(LogValues);
   LogValuesThread.setInterval(1000);
 
   SoundThread.onRun(Sound);
-  SoundThread.setInterval(100);
+  SoundThread.setInterval(20);
 
   LEDThread.onRun(LED);
   LEDThread.setInterval(500);

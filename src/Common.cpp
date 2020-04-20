@@ -23,5 +23,5 @@ void ButtonToSound(bool button, bool buttonLast, uint8_t key, uint8_t keyLast, u
 // Converts analog valude to key value
 int AnalogToKey(int analog)
 {
-    return analog/100+55;
+    return analog/50+50;
 }
