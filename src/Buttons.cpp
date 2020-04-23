@@ -3,7 +3,8 @@
 // LEDs chase
 // Poti 0 controls key of sound
 // Poti 1 controls instrument of buttons
-void ButtonsSimple()
+// input LED defines if the LED of the button pressed should also be on
+void ButtonsSimple(bool LED)
 {
   static bool greenLast = true;
   static bool yellowLast = true;
@@ -28,6 +29,15 @@ void ButtonsSimple()
   blueLast = blue;
   ButtonToSound(red, redLast, key, keyLast, 6);
   redLast = red;
+  
+  if(LED)
+  {
+    mcp.digitalWrite(LED_BUTTON_GREEN, not green);
+    mcp.digitalWrite(LED_BUTTON_YELLOW, not yellow);
+    mcp.digitalWrite(LED_BUTTON_WHITE, not white);
+    mcp.digitalWrite(LED_BUTTON_BLUE, not blue);
+    mcp.digitalWrite(LED_BUTTON_RED, not red);
+  }
 
   keyLast = key;
 }

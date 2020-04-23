@@ -5,6 +5,6 @@
 #include "Common.h"
 #include "midi.h"
 
-void ButtonsSimple();
+void ButtonsSimple(bool LED);
 void SetButtonInstruments(int Poti);
 void ButtonsLEDChase();

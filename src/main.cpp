@@ -55,13 +55,23 @@ void Sound()
 {
   //midiAllOff(0);
   ArcadeButtons();
-  ButtonsSimple();
+  if(switchGreen)
+  {
+    ButtonsSimple(true);
+  }
+  else
+  {
+    ButtonsSimple(false);
+  }
 }
 
 void LED()
 {
   ArcadeButtonsLED();
-  ButtonsLEDChase();
+  if(not switchGreen)
+  {
+    ButtonsLEDChase();
+  }
 }
    
 // Function that blinks the hartbeat led if the battery voltage is good
