@@ -9,6 +9,9 @@ Most kids
 This project combines these features in one box. This allows us to test if our kid is part of "most kids".
 
 ## Hardware
+
+![Overview of ButtonBoard](doc/ImageOverview.jpg)
+
 The main hardware parts are:
 
  - Adafruit Feather 32u4 Basic Proto
