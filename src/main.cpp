@@ -156,9 +156,12 @@ void setup() {
 
   // midi setup
   VS1053_MIDI.begin(31250); // MIDI uses a 'strange baud rate'
-  midiSetChannelBank(0, VS1053_BANK_MELODY);
-  midiSetChannelVolume(0, 127);
-  midiSetInstrument(0, VS1053_GM1_OCARINA);
+  for(int i=0;i<7;i++)
+  {
+    midiSetChannelBank(i, VS1053_BANK_MELODY);
+    midiSetChannelVolume(i, 255);
+    midiSetInstrument(i, VS1053_GM1_OCARINA);
+  }
 
   // setup of feather pins
   pinMode(LED_GREEN_LEFT, OUTPUT); 
