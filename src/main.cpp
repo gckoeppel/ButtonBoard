@@ -79,9 +79,17 @@ void LED()
 void HartBeat()
 {
   static bool ledStatus = false;
-  ledStatus = !ledStatus;
 
-  digitalWrite(LED_YELLOW, ledStatus);
+  if(battery_voltage >= 3.6)
+  {
+    ledStatus = !ledStatus;
+    digitalWrite(LED_YELLOW, ledStatus);
+  }
+  else
+  {
+    digitalWrite(LED_YELLOW, HIGH)
+  }
+  
 }
 
 // Function that gets all input data
